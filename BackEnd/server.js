@@ -1,24 +1,25 @@
 const express = require('express');
 const app = express();
 const port = 4000;
-
+//enable CORS for server
 const cors = require('cors');
 app.use(cors());
-
+//the set up allow frontend to make api request for backend
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
+//Add body-parser middleware
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+//connect to MongoDB
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://admin:admin@martinscluster.w5rtkz0.mongodb.net/DB14');
-
+//Define schema and data mode
+//create object for database
 const movieSchema = new mongoose.Schema({
   title:String,
   year:String,
@@ -26,17 +27,17 @@ const movieSchema = new mongoose.Schema({
 });
 
 const movieModel = new mongoose.model('sdfsdfsdf45',movieSchema);
-
+//Get request to api/movies to return JSON data
 app.get('/api/movies', async (req, res) => {
     const movies = await movieModel.find({});
     res.status(200).json({movies})
 });
-
+//Create a method to retrieve a specific movie by its ID
 app.get('/api/movie/:id', async (req ,res)=>{
   const movie = await movieModel.findById(req.params.id);
   res.json(movie);
 })
-
+//after input the data step (clicking submit)
 app.put('/api/movie/:id', async (req, res)=>{
   const movie = await movieModel.findByIdAndUpdate(req.params.id, req.body, {new:true});
   res.send(movie);
@@ -51,6 +52,14 @@ app.post('/api/movies',async (req, res)=>{
 
     res.status(201).json({"message":"Movie Added!",Movie:newMovie});
 })
+//handle DELETE requests:
+app.delete('/api/movie/:id', async (req, res) => {
+  
+  console.log('Deleting movie with ID:', req.params.id);
+  const movie = await movieModel.findByIdAndDelete(req.params.id);
+  res.status(200).send({ message: "Movie deleted successfully", movie });
+  
+});
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

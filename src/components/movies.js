@@ -1,11 +1,8 @@
 import MovieItem from "./movieitem";
-
-const Movies = (props)=>{
-    return props.myMovies.map(
-        (movie)=>{
-            return <MovieItem mymovie={movie} key={movie._id} />
-        }
-    );
+//Passes the ReloadData function to child components so they can trigger a refresh after deletion.
+function movies(props){
+    return props.myMovies.map((movie)=>{
+                return  <MovieItem mymovie={movie} key={movie._id} Reload={props.ReloadData}/>
+});
 }
-
-export default Movies;
+   export default movies;
